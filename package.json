@@ -6,11 +6,10 @@
     "build": "tsc",
     "start": "node dist/server.js"
   },
-
-
   "dependencies": {
     "@types/cors": "^2.8.19",
     "@types/pg": "^8.20.0",
+    "express": "^5.2.1",
     "pg": "^8.20.0"
   },
   "devDependencies": {
