@@ -30,7 +30,9 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
         req.log.info({req: req.body}, 'user.login.attempt')
         const {email, password} = LoginSchema.parse(req.body)
         const valid = login(email, password)
-        if (!valid) throw new AuthError()
+        if (!valid) {
+            throw new AuthError()
+        }
         req.log.info({match: valid}, 'user.login.success')
         return res.status(200).json({msg: "Login successful"})
     }catch(err){

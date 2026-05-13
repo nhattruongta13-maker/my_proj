@@ -13,5 +13,5 @@ export const findUser = async (email: string) => {
                                 FROM users
                                 WHERE email = $1`,
                                 [email])
-    return result.rows[0]
+    return result
 }
