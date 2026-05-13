@@ -9,8 +9,9 @@ export const insertUser = (async (email: string, password: string) => {
 })
 
 export const findUser = async (email: string) => {
-    const result = pool.query(`SELECT password_hash 
+    const result = await pool.query(`SELECT password_hash 
                                 FROM users
                                 WHERE email = $1`,
                                 [email])
+    return result
 }
