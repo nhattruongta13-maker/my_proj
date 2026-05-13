@@ -13,7 +13,9 @@ router.post('/signup', async (req: Request, res: Response, next: NextFunction) =
     try{
     const {email, password} = UserSchema.parse(req.body)
     const newUser = await register(email, password)
-    return res.status(201).json({msg: "Account created"})
+    return res.status(201).json({msg: "Account created",
+                                 info: newUser
+    })
     }catch(err){
         next(err)
     }
