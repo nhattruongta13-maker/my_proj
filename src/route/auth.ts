@@ -29,7 +29,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     try{
         req.log.info({req: req.body}, 'user.login.attempt')
         const {email, password} = LoginSchema.parse(req.body)
-        const valid = login(email, password)
+        const valid = await login(email, password)
         if (!valid) {
             throw new AuthError()
         }
