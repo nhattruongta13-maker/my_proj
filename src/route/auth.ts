@@ -5,9 +5,11 @@ import {UserSchema} from '../schemas/validation'
 
 const router = Router()
 
-router.post('/signup', (req: Request, res: Response, next: NextFunction) => {
+router.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
     try{
-    const sanitziedInput = UserSchema.parse(req.body)
+    const {email, password} = UserSchema.parse(req.body)
+    const newUser = await register(email, password)
+    return res.status(200).json({msg: "Account created"})
     }catch(err){
         if (err instanceof ZodError){
             return res.status(400).json({error: err.issues})
