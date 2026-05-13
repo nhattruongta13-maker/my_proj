@@ -2,7 +2,7 @@ import {register} from '../services/db_manip'
 import {Router, Request, Response, NextFunction} from 'express'
 import {errorHandler} from '../middlewares/errorHandler'
 import {UserSchema} from '../schemas/validation'
-import {generateRequestId} from '../middlewares/req_config'
+import {generateRequestId} from '../middlewares/generateRequestId'
 
 
 const router = Router()
