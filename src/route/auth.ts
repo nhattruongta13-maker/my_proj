@@ -20,3 +20,5 @@ router.post('/signup', async (req: Request, res: Response, next: NextFunction) =
 })
 
 router.use(errorHandler)
+
+export default router
