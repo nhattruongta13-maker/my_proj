@@ -5,6 +5,6 @@ export const logger = pino({
     base: {
         pid: false,
     },
-    redact: ['*.password', 'password_hash', 'req.readers.authorization', 'req.body.password'],
+    redact: ['*.password', '*.password_hash', 'req.readers.authorization',],
     timestamp: pino.stdTimeFunctions.isoTime
 })

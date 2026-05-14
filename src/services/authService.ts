@@ -1,4 +1,4 @@
-import {insertUser, findUser} from '../database/SQL'
+import {insertUser, findUserByEmail} from '../database/SQL'
 import bcrypt from 'bcrypt'
 import {createWebToken} from '../validation/createWebToken'
 import {AuthError} from '../errors/errors'
@@ -12,7 +12,7 @@ export const register = async (email: string, password: string) => {
 
 export const login = async (email: string, password: string) => {
     const dummyHash = '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'
-    const user = await findUser(email)
+    const user = await findUserByEmail(email)
     const hashToCompare = user?.password_hash?? dummyHash
     const valid = await bcrypt.compare(password, hashToCompare)
     if (!valid || !user) throw new AuthError()

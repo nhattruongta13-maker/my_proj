@@ -8,10 +8,18 @@ export const insertUser = (async (email: string, password: string) => {
     return result.rows[0]
 })
 
-export const findUser = async (email: string) => {
+export const findUserByEmail = async (email: string) => {
     const result = await pool.query(`SELECT id, email, password_hash 
                                 FROM users
                                 WHERE email = $1`,
                                 [email])
+    return result.rows[0]
+}
+
+export const findUserById = async (id: number) => {
+    const result = await pool.query(`SELECT id, email, time
+                                FROM users
+                                WHERE id = $1`,
+                                [id])
     return result.rows[0]
 }
