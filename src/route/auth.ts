@@ -1,7 +1,7 @@
-import {register, login} from '../services/db_manip'
+import {register, login} from '../services/authService'
 import {Router, Request, Response, NextFunction} from 'express'
 import {errorHandler} from '../middlewares/errorHandler'
-import {UserSchema, LoginSchema} from '../schemas/validation'
+import {UserSchema, LoginSchema} from '../validation/schemas'
 import {generateRequestId} from '../middlewares/generateRequestId'
 import {AuthError} from '../errors/errors'
 

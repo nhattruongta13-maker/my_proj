@@ -1,6 +1,6 @@
 import {insertUser, findUser} from '../database/SQL'
 import bcrypt from 'bcrypt'
-import {createWebToken} from '../schemas/jwt'
+import {createWebToken} from '../validation/createWebToken'
 import {AuthError} from '../errors/errors'
 
 
