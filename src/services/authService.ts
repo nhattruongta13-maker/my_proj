@@ -17,7 +17,7 @@ export const login = async (email: string, password: string) => {
     const hashToCompare = user?.password_hash?? dummyHash
     const valid = await bcrypt.compare(password, hashToCompare)
     if (!valid || !user) throw new AuthError()
-    const token = createWebToken(user.id)
+    const token = createWebToken({id: user.id})
     return token
 }
 
