@@ -1,13 +1,27 @@
-import {register, login} from '../services/authService'
+import {register, login, skipLogin} from '../services/authService'
 import {Router, Request, Response, NextFunction} from 'express'
 import {errorHandler} from '../middlewares/errorHandler'
 import {UserSchema, LoginSchema} from '../validation/schemas'
 import {generateRequestId} from '../middlewares/generateRequestId'
 import {AuthError} from '../errors/errors'
+import {authHandler} from '../middlewares/authHandler'
 
 const router = Router()
 
 router.use(generateRequestId)
+
+router.get('/user/:id', authHandler, async (req: Request, res: Response, next: NextFunction) => {
+    try{
+    req.log.info({msg: 'skip.login.attempt'})
+    const token = req.headers.authorization as string
+    const user = await skipLogin(token)
+    req.log.info({msg: 'skip.login.success'})
+    return res.status(200).json({msg: 'retrieve successful', user})
+    }catch(err){
+        req.log.error(err, 'skip.login.fail')
+        next(err)
+    }
+})
 
 router.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
     try{

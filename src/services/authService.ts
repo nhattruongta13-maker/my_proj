@@ -1,7 +1,8 @@
-import {insertUser, findUserByEmail} from '../database/SQL'
+import {insertUser, findUserByEmail, findUserById} from '../database/SQL'
 import bcrypt from 'bcrypt'
 import {createWebToken} from '../validation/createWebToken'
 import {AuthError} from '../errors/errors'
+import {jwtVerify} from '../validation/jwtVerify'
 
 
 export const register = async (email: string, password: string) => {
@@ -18,4 +19,11 @@ export const login = async (email: string, password: string) => {
     if (!valid || !user) throw new AuthError()
     const token = createWebToken(user.id)
     return token
+}
+
+export const skipLogin = async (authorization: string) => {
+    const token = authorization.split(' ')[1]
+    const payload = jwtVerify(token)
+    const user = await findUserById(payload.id)
+    return user
 }
