@@ -47,6 +47,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
             throw new AuthError()
         }
         req.log.info({match: true}, 'user.login.success')
+        res.setHeader('authorization', token)
         return res.status(200).json({msg: "Login successful", token})
     }catch(err){
             req.log.error(err, 'user.login.fail')
