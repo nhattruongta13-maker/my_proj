@@ -5,7 +5,6 @@ import {UserSchema, LoginSchema} from '../schemas/validation'
 import {generateRequestId} from '../middlewares/generateRequestId'
 import {AuthError} from '../errors/errors'
 
-
 const router = Router()
 
 router.use(generateRequestId)
@@ -29,12 +28,12 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     try{
         req.log.info({req: req.body}, 'user.login.attempt')
         const {email, password} = LoginSchema.parse(req.body)
-        const valid = await login(email, password)
-        if (!valid) {
+        const token = await login(email, password)
+        if (!token) {
             throw new AuthError()
         }
-        req.log.info({match: valid}, 'user.login.success')
-        return res.status(200).json({msg: "Login successful"})
+        req.log.info({match: true}, 'user.login.success')
+        return res.status(200).json({msg: "Login successful", token})
     }catch(err){
             req.log.error(err, 'user.login.fail')
             next(err)

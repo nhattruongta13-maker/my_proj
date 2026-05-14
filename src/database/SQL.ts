@@ -5,7 +5,7 @@ export const insertUser = (async (email: string, password: string) => {
                 RETURNING id, email, time`,
                 [email, password]
     )
-    return result
+    return result.rows[0]
 })
 
 export const findUser = async (email: string) => {
@@ -13,5 +13,5 @@ export const findUser = async (email: string) => {
                                 FROM users
                                 WHERE email = $1`,
                                 [email])
-    return result
+    return result.rows[0]
 }
