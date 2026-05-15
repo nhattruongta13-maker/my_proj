@@ -23,3 +23,9 @@ export const findUserById = async (id: number) => {
                                 [id])
     return result.rows[0]
 }
+
+export const createTokenTable = async () => {
+    await pool.query(`CREATE TABLE refreshToken(
+        id INT NOT NULL,
+        token TEXT NOT NULL)`)
+}
