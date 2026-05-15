@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
-import {StringValue} from 'ms'
+import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 
 export const createWebToken = (payload: {id: number}) => {
     const secret = process.env.JWT_SECRET
@@ -9,10 +10,8 @@ export const createWebToken = (payload: {id: number}) => {
     return token
 }
 
-export const createRefreshToken = (payload: {id: number}) => {
-    const secret = process.env.REFRESH_SECRET
-    const expiresIn = '7d'
-    if (!secret) throw new Error('JWT_SECRET is missing. Blame yourself!')
-    const token = jwt.sign(payload, secret, {expiresIn})
-    return token
+export const createRefreshToken = async () => {
+    const token = crypto.randomBytes(64).toString('hex')
+    const tokenHash = await bcrypt.hash(token, 10)
+    return tokenHash
 }
