@@ -20,7 +20,7 @@ export const login = async (email: string, password: string) => {
     const accessToken = createWebToken({id: user.id})
     const refreshToken = createRefreshToken({id: user.id})
     const refreshTokenHash = await bcrypt.hash(refreshToken, 10)
-    const insertToken = insertTokenById(user.id, refreshTokenHash)
+    const insertToken = await insertTokenById(user.id, refreshTokenHash)
     const tokens: Tokens = {accessToken, refreshTokenHash}
     return tokens
 }
