@@ -11,5 +11,5 @@ export const LoginSchema = z.object({
 })
 
 export const IdSchema = z.object({
-    id: z.coerce.number()
+    id: z.coerce.number().int().positive()
 })

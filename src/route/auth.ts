@@ -16,7 +16,7 @@ router.get('/user/:id', authHandler, async (req: Request, res: Response, next: N
     req.log.info({msg: 'skip.login.attempt'})
     const token = req.headers.authorization as string
     const user = await skipLogin(token)
-    const req_id = IdSchema.parse(req.params.id)
+    const req_id = IdSchema.parse({id: req.params.id})
     if (user.id !== req_id) throw new NosyError()
     req.log.info({msg: 'skip.login.success'})
     return res.status(200).json({msg: 'retrieve successful', user})
