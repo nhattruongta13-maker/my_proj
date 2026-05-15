@@ -49,8 +49,8 @@ router.post('/login', rateLimiter, async (req: Request, res: Response, next: Nex
         if (!accessToken || !refreshTokenHash) {
             throw new AuthError()
         }
-        req.log.info({match: true}, 'user.login.success')
-        return res.status(200).json({msg: "Login successful", accessToken})
+        req.log.info({match: true, refreshTokenHash}, 'user.login.success')
+        return res.status(200).json({msg: "Login successful"})
     }catch(err){
             req.log.error(err, 'user.login.fail')
             next(err)
