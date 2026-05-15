@@ -6,10 +6,11 @@ import {generateRequestId} from '../middlewares/generateRequestId'
 import {AuthError, NosyError} from '../errors/errors'
 import {authHandler} from '../middlewares/authHandler'
 import {rateLimiter} from '../middlewares/rateLimit'
-
+import cookieParser from 'cookie-parser'
 const router = Router()
 
 router.use(generateRequestId)
+router.use(cookieParser())
 
 router.get('/user/:id', authHandler, async (req: Request, res: Response, next: NextFunction) => {
     try{
@@ -45,11 +46,12 @@ router.post('/login', rateLimiter, async (req: Request, res: Response, next: Nex
     try{
         req.log.info({req: req.body}, 'user.login.attempt')
         const {email, password} = LoginSchema.parse(req.body)
-        const {accessToken, refreshTokenHash} = await login(email, password)
-        if (!accessToken || !refreshTokenHash) {
+        const {accessToken} = await login(email, password, res)
+        if (!accessToken) {
             throw new AuthError()
         }
-        req.log.info({match: true, refreshTokenHash}, 'user.login.success')
+
+        req.log.info({match: true}, 'user.login.success')
         return res.status(200).json({msg: "Login successful"})
     }catch(err){
             req.log.error(err, 'user.login.fail')

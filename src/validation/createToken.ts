@@ -11,7 +11,7 @@ export const createWebToken = (payload: {id: number}) => {
 }
 
 export const createRefreshToken = async () => {
-    const token = crypto.randomBytes(64).toString('hex')
-    const tokenHash = await bcrypt.hash(token, 10)
-    return tokenHash
+    const refreshToken = crypto.randomBytes(64).toString('hex')
+    const tokenHash = await bcrypt.hash(refreshToken, 10)
+    return {refreshToken, tokenHash}
 }
