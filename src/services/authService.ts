@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import {createWebToken, createRefreshToken} from '../validation/createToken'
 import {AuthError} from '../errors/errors'
 import {jwtVerify} from '../validation/jwtVerify'
+import crypto from 'crypto'
 
 
 export const register = async (email: string, password: string) => {
@@ -19,7 +20,7 @@ export const login = async (email: string, password: string) => {
     if (!valid || !user) throw new AuthError()
     const accessToken = createWebToken({id: user.id})
     const refreshToken = createRefreshToken({id: user.id})
-    const refreshTokenHash = await bcrypt.hash(refreshToken, 10)
+    const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex')
     const insertToken = await insertTokenById(user.id, refreshTokenHash)
     const tokens: Tokens = {accessToken, refreshTokenHash}
     return tokens
