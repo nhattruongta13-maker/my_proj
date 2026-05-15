@@ -8,6 +8,7 @@ import authRouter from './route/auth'
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.set('trust proxy', true)
 
 const PORT = process.env.PORT
 app.use('/auth', authRouter)
