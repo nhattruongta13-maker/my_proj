@@ -2,7 +2,7 @@ export {}
 
 declare global{
     type Tokens = {
-        refreshToken: string,
+        refreshTokenHash: string,
         accessToken: string
     }
 }

@@ -45,12 +45,12 @@ router.post('/login', rateLimiter, async (req: Request, res: Response, next: Nex
     try{
         req.log.info({req: req.body}, 'user.login.attempt')
         const {email, password} = LoginSchema.parse(req.body)
-        const token = await login(email, password)
-        if (!token) {
+        const tokens = await login(email, password)
+        if (!tokens) {
             throw new AuthError()
         }
         req.log.info({match: true}, 'user.login.success')
-        return res.status(200).json({msg: "Login successful", token})
+        return res.status(200).json({msg: "Login successful", tokens})
     }catch(err){
             req.log.error(err, 'user.login.fail')
             next(err)

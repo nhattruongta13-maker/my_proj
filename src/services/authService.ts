@@ -1,4 +1,4 @@
-import {insertUser, findUserByEmail, findUserById} from '../database/SQL'
+import {insertUser, findUserByEmail, findUserById, insertTokenById} from '../database/SQL'
 import bcrypt from 'bcrypt'
 import {createWebToken, createRefreshToken} from '../validation/createToken'
 import {AuthError} from '../errors/errors'
@@ -19,7 +19,9 @@ export const login = async (email: string, password: string) => {
     if (!valid || !user) throw new AuthError()
     const accessToken = createWebToken({id: user.id})
     const refreshToken = createRefreshToken({id: user.id})
-    const tokens: Tokens = {accessToken, refreshToken}
+    const refreshTokenHash = await bcrypt.hash(refreshToken, 10)
+    const insertToken = insertTokenById(user.id, refreshTokenHash)
+    const tokens: Tokens = {accessToken, refreshTokenHash}
     return tokens
 }
 
