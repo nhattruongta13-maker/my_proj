@@ -5,7 +5,7 @@ import {UserSchema, LoginSchema, IdSchema} from '../validation/schemas'
 import {generateRequestId} from '../middlewares/generateRequestId'
 import {AuthError, NosyError} from '../errors/errors'
 import {authHandler} from '../middlewares/authHandler'
-import {loginLimiter} from '../middlewares/rateLimit'
+import {rateLimiter} from '../middlewares/rateLimit'
 
 const router = Router()
 
@@ -26,7 +26,7 @@ router.get('/user/:id', authHandler, async (req: Request, res: Response, next: N
     }
 })
 
-router.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/signup', rateLimiter, async (req: Request, res: Response, next: NextFunction) => {
     try{
     const {email, password} = UserSchema.parse(req.body)
     req.log.info({user: req.body}, 'user.signup.attempt')
@@ -41,7 +41,7 @@ router.post('/signup', async (req: Request, res: Response, next: NextFunction) =
     }
 })
 
-router.post('/login', loginLimiter, async (req: Request, res: Response, next: NextFunction) => {
+router.post('/login', rateLimiter, async (req: Request, res: Response, next: NextFunction) => {
     try{
         req.log.info({req: req.body}, 'user.login.attempt')
         const {email, password} = LoginSchema.parse(req.body)
