@@ -1,6 +1,6 @@
 import {insertUser, findUserByEmail, findUserById} from '../database/SQL'
 import bcrypt from 'bcrypt'
-import {createWebToken} from '../validation/createToken'
+import {createWebToken, createRefreshToken} from '../validation/createToken'
 import {AuthError} from '../errors/errors'
 import {jwtVerify} from '../validation/jwtVerify'
 
@@ -17,8 +17,10 @@ export const login = async (email: string, password: string) => {
     const hashToCompare = user?.password_hash?? dummyHash
     const valid = await bcrypt.compare(password, hashToCompare)
     if (!valid || !user) throw new AuthError()
-    const token = createWebToken({id: user.id})
-    return token
+    const accessToken = createWebToken({id: user.id})
+    const refreshToken = createRefreshToken({id: user.id})
+    const tokens: Tokens = {accessToken, refreshToken}
+    return tokens
 }
 
 export const skipLogin = async (authorization: string) => {

@@ -1,3 +1,5 @@
+export {}
+
 declare global{
     type Tokens = {
         refreshToken: string,
