@@ -10,3 +10,15 @@ export class AuthError extends Error{
     }
     
 }
+
+export class NosyError extends Error{
+    public name
+    public code
+
+    constructor(message: string = 'Stop being nosy'){
+        super(message)
+        this.name = 'NoseyError'
+        this. code = 403
+        Error.captureStackTrace(this, this.constructor)
+    }
+}

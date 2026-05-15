@@ -9,3 +9,7 @@ export const LoginSchema = z.object({
     email: z.email().toLowerCase().trim(),
     password: z.string()
 })
+
+export const IdSchema = z.object({
+    id: z.coerce.number()
+})

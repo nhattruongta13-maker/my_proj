@@ -1,9 +1,9 @@
 import {register, login, skipLogin} from '../services/authService'
 import {Router, Request, Response, NextFunction} from 'express'
 import {errorHandler} from '../middlewares/errorHandler'
-import {UserSchema, LoginSchema} from '../validation/schemas'
+import {UserSchema, LoginSchema, IdSchema} from '../validation/schemas'
 import {generateRequestId} from '../middlewares/generateRequestId'
-import {AuthError} from '../errors/errors'
+import {AuthError, NosyError} from '../errors/errors'
 import {authHandler} from '../middlewares/authHandler'
 
 const router = Router()
@@ -15,6 +15,8 @@ router.get('/user/:id', authHandler, async (req: Request, res: Response, next: N
     req.log.info({msg: 'skip.login.attempt'})
     const token = req.headers.authorization as string
     const user = await skipLogin(token)
+    const req_id = IdSchema.parse(req.params.id)
+    if (user.id !== req_id) throw new NosyError()
     req.log.info({msg: 'skip.login.success'})
     return res.status(200).json({msg: 'retrieve successful', user})
     }catch(err){
