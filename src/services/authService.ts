@@ -1,10 +1,10 @@
-import {insertUser, findUserByEmail, findUserById, insertTokenById} from '../database/SQL'
+import {insertUser, findUserByEmail, findUserById, insertTokenById, findTokenByHash} from '../database/SQL'
 import bcrypt from 'bcrypt'
 import {createWebToken, createRefreshToken} from '../validation/createToken'
-import {AuthError} from '../errors/errors'
+import {AuthError, NosyError} from '../errors/errors'
 import {jwtVerify} from '../validation/jwtVerify'
 import crypto from 'crypto'
-import {Response} from 'express'
+import {Response, Request} from 'express'
 
 export const register = async (email: string, password: string) => {
     const password_hash = await bcrypt.hash(password, 10)
@@ -19,7 +19,7 @@ export const login = async (email: string, password: string, res: Response) => {
     const valid = await bcrypt.compare(password, hashToCompare)
     if (!valid || !user) throw new AuthError()
     const accessToken = createWebToken({id: user.id})
-    const {refreshToken, tokenHash} = await createRefreshToken()
+    const {refreshToken, tokenHash} = createRefreshToken()
     res.cookie('refreshToken', refreshToken,{
             httpOnly: true,
             secure:process.env.NODE_ENV === 'production',
@@ -36,4 +36,13 @@ export const skipLogin = async (authorization: string) => {
     const payload = jwtVerify(token)
     const user = await findUserById(payload.id)
     return user
+}
+
+export const verifyRefresh = async (req: Request) => {
+    const token = req.cookies.refreshToken
+    if (!token) throw new AuthError('Please login again') //check if the token is there
+    const hashToCompare = crypto.hash('sha256', token, 'hex')
+    const result = await findTokenByHash(hashToCompare)
+    if(!result) throw new AuthError('Please login again') //check if someone the token is in the db
+    return result
 }

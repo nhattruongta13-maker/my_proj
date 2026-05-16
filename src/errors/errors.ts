@@ -22,3 +22,4 @@ export class NosyError extends Error{
         Error.captureStackTrace(this, this.constructor)
     }
 }
+

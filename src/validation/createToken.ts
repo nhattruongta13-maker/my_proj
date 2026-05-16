@@ -11,6 +11,6 @@ export const createWebToken = (payload: {id: number}) => {
 
 export const createRefreshToken = () => {
     const refreshToken = crypto.randomBytes(64).toString('hex')
-    const tokenHash = crypto.hash('sha256', refreshToken)
+    const tokenHash = crypto.hash('sha256', refreshToken, 'hex')
     return {refreshToken, tokenHash}
 }

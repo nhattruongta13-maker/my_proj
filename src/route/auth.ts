@@ -6,11 +6,10 @@ import {generateRequestId} from '../middlewares/generateRequestId'
 import {AuthError, NosyError} from '../errors/errors'
 import {authHandler} from '../middlewares/authHandler'
 import {rateLimiter} from '../middlewares/rateLimit'
-import cookieParser from 'cookie-parser'
 const router = Router()
 
 router.use(generateRequestId)
-router.use(cookieParser())
+
 
 router.get('/user/:id', authHandler, async (req: Request, res: Response, next: NextFunction) => {
     try{
