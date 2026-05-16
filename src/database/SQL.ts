@@ -40,8 +40,3 @@ export const findTokenByHash = async (hash: string) => {
     return result.rows[0]
 }
 
-export const addTable = async () => {
-    pool.query(`ALTER TABLE refreshtoken 
-        ADD COLUMN expiresAt TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '7 days'),
-        ADD COLUMN revokedAt TIMESTAMPTZ NULL`)
-}
