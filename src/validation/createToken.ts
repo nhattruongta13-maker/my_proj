@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 
 export const createWebToken = (payload: {id: number}) => {
@@ -10,8 +9,8 @@ export const createWebToken = (payload: {id: number}) => {
     return token
 }
 
-export const createRefreshToken = async () => {
+export const createRefreshToken = () => {
     const refreshToken = crypto.randomBytes(64).toString('hex')
-    const tokenHash = await bcrypt.hash(refreshToken, 10)
+    const tokenHash = crypto.hash('sha256', refreshToken)
     return {refreshToken, tokenHash}
 }
