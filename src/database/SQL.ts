@@ -33,7 +33,7 @@ export const insertTokenById = async (id: number, refreshToken: string) => {
 }
 
 export const findTokenByHash = async (hash: string) => {
-    const result = await pool.query(`SELECT token 
+    const result = await pool.query(`SELECT token, expiresat, revokedat 
                                      FROM refreshtoken
                                      WHERE hash = $1`,
                                      [hash])
