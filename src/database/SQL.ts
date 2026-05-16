@@ -31,3 +31,11 @@ export const insertTokenById = async (id: number, refreshToken: string) => {
                                     [id, refreshToken])
     return result.rows[0]
 }
+
+export const findTokenById = async (id: number) => {
+    const result = await pool.query(`SELECT token 
+                                     FROM refreshtoken
+                                     WHERE id = $1`,
+                                     [id])
+    return result.rows[0]
+}
