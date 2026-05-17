@@ -1,7 +1,7 @@
 import {insertUser, findUserByEmail, findUserById, insertTokenById, findTokenByHash} from '../database/SQL'
 import bcrypt from 'bcrypt'
 import {createWebToken, createRefreshToken} from '../validation/createToken'
-import {AuthError, NosyError} from '../errors/errors'
+import {AuthError, NosyError, AttackError} from '../errors/errors'
 import {jwtVerify} from '../validation/jwtVerify'
 import crypto from 'crypto'
 import {Response, Request} from 'express'
@@ -38,11 +38,18 @@ export const skipLogin = async (authorization: string) => {
     return user
 }
 
-export const verifyRefresh = async (req: Request) => {
-    const token = req.cookies.refreshToken
+export const verifyRefresh = async (token: string, req: Request) => {
+    req.log.info({msg: 'Refresh delivering...'})
     if (!token) throw new AuthError('Please login again') //check if the token is there
+    req.log.info({msg: 'Refresh delivered!'})
     const hashToCompare = crypto.hash('sha256', token, 'hex')
     const result = await findTokenByHash(hashToCompare)
-    if(!result) throw new AuthError('Please login again') //check if someone the token is in the db
-    return result
+    req.log.info({msg: 'Token comparing'})
+    if (!result) throw new AuthError('Please login again') //check if someone the token is in the db
+    req.log.info({msg: 'Token valid'})
+    const now = new Date()
+    if (result.expiresat < now) throw new AuthError('Please login again')
+    req.log.info({msg: 'Token still alive'})
+    if (result.revokedat) throw new AttackError('Critical attack! Revoked token use detected')
+    return result 
 }

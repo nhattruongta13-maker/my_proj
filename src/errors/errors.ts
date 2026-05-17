@@ -23,3 +23,14 @@ export class NosyError extends Error{
     }
 }
 
+export class AttackError extends Error{
+    public name
+    public code
+
+    constructor(message: string){
+        super(message)
+        this.name = 'NoseyError'
+        this. code = 403
+        Error.captureStackTrace(this, this.constructor)
+    }
+}
