@@ -1,4 +1,4 @@
-import {insertUser, findUserByEmail, findUserById, insertTokenById, findTokenByHash} from '../database/SQL'
+import {insertUser, findUserByEmail, findUserById, insertTokenById, findTokenByHash, setTokenRevoked} from '../database/SQL'
 import bcrypt from 'bcrypt'
 import {createWebToken, createRefreshToken} from '../validation/createToken'
 import {AuthError, NosyError, AttackError} from '../errors/errors'
@@ -55,6 +55,12 @@ export const verifyRefresh = async (token: string, req: Request) => {
 }
 
 export const rotateRefresh = async (id: number, req: Request, res: Response) => {
+    const hashToFind = crypto.hash('sha256', req.cookies.refreshToken, 'hex')
+    const found = await findTokenByHash(hashToFind)
+    if (found) {
+        await setTokenRevoked(hashToFind)
+        req.log.info('New honeytrap set')
+    }
     const {refreshToken, tokenHash} = createRefreshToken()
     const insertToken = await insertTokenById(id, tokenHash)
     if (!insertToken) throw new Error()
@@ -62,7 +68,8 @@ export const rotateRefresh = async (id: number, req: Request, res: Response) => 
         httpOnly: true,
         sameSite: 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: '/refresh'
+        path: '/refresh',
+        secure: true
     })
     req.log.info('New refresh token created')
     return true
