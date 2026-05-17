@@ -51,5 +51,5 @@ export const verifyRefresh = async (token: string, req: Request) => {
     if (result.expiresat < now) throw new AuthError('Please login again')
     req.log.info({msg: 'Token still alive'})
     if (result.revokedat) throw new AttackError('Critical attack! Revoked token use detected')
-    return result 
+    return result
 }

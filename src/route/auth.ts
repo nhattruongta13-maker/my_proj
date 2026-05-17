@@ -1,11 +1,12 @@
-import {register, login, skipLogin} from '../services/authService'
+import {register, login, skipLogin, verifyRefresh} from '../services/authService'
 import {Router, Request, Response, NextFunction} from 'express'
 import {errorHandler} from '../middlewares/errorHandler'
 import {UserSchema, LoginSchema, IdSchema} from '../validation/schemas'
 import {generateRequestId} from '../middlewares/generateRequestId'
-import {AuthError, NosyError} from '../errors/errors'
+import {AuthError, NosyError, AttackError} from '../errors/errors'
 import {authHandler} from '../middlewares/authHandler'
 import {rateLimiter} from '../middlewares/rateLimit'
+import {createWebToken} from '../validation/createToken'
 const router = Router()
 
 router.use(generateRequestId)
@@ -58,7 +59,19 @@ router.post('/login', rateLimiter, async (req: Request, res: Response, next: Nex
     }
 })
 
-
+router.post('/refresh', async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const token = req.cookies.refreshToken
+        const result = await verifyRefresh(token, req)
+        const newAccessToken = createWebToken(result.id)
+        return res.json({msg: 'Refresh successful', newToken: newAccessToken})
+    }catch(err){
+        if (err instanceof AttackError){
+            req.log.fatal('Critical attack! Revoked token reuse detected!')
+        }
+        next(err)
+    }
+})
 
 
 router.use(errorHandler)
