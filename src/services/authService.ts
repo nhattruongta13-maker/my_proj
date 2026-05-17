@@ -54,8 +54,10 @@ export const verifyRefresh = async (token: string, req: Request) => {
     return result
 }
 
-export const rotateRefresh = async (token: string, res: Response, req: Request) => {
-    const refreshToken = createRefreshToken()
+export const rotateRefresh = async (id: number, req: Request, res: Response) => {
+    const {refreshToken, tokenHash} = createRefreshToken()
+    const insertToken = await insertTokenById(id, tokenHash)
+    if (!insertToken) throw new Error()
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         sameSite: 'strict',
@@ -63,5 +65,5 @@ export const rotateRefresh = async (token: string, res: Response, req: Request) 
         path: '/refresh'
     })
     req.log.info('New refresh token created')
-    return refreshToken
+    return true
 }

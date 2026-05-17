@@ -1,4 +1,4 @@
-import {register, login, skipLogin, verifyRefresh} from '../services/authService'
+import {register, login, skipLogin, verifyRefresh, rotateRefresh} from '../services/authService'
 import {Router, Request, Response, NextFunction} from 'express'
 import {errorHandler} from '../middlewares/errorHandler'
 import {UserSchema, LoginSchema, IdSchema} from '../validation/schemas'
@@ -64,15 +64,28 @@ router.post('/refresh', async (req: Request, res: Response, next: NextFunction) 
         const token = req.cookies.refreshToken
         const result = await verifyRefresh(token, req)
         const newAccessToken = createWebToken(result.id)
-        return res.json({msg: 'Refresh successful', newToken: newAccessToken})
-    }catch(err){
+        return res.status(200).json({msg: 'Refresh successful', newToken: newAccessToken})
+    }catch(err: any){
         if (err instanceof AttackError){
             req.log.fatal('Critical attack! Revoked token reuse detected!')
+        }else{
+            req.log.error(err, err.message)
         }
         next(err)
     }
 })
 
+router.post('/newRefresh', async (req: Request, res: Response, next:NextFunction) => {
+    try{
+        const success =  await rotateRefresh(req.body.id, req, res)
+        if (!success) throw new Error()
+        req.log.info('New refresh provided')
+        return res.status(200).json({msg: 'New refresh provided'})
+    }catch(err: any){
+        req.log.error(err, err.message)
+        next(err)
+    }
+})
 
 router.use(errorHandler)
 
