@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express'
 import {ZodError} from 'zod'
-import {AuthError, NosyError} from '../errors/errors'
+import {AuthError, NosyError, AttackError} from '../errors/errors'
 import jwt from 'jsonwebtoken'
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -16,6 +16,8 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
         return res.status(401).json({error: "Stop hacking dude"})
     }else if(err instanceof NosyError){
         return res.status(403).json({error: err.message})
+    }else if(err instanceof AttackError){
+        return res.status(401).json({FATAL: err.message})
     }
     else{
         return res.status(500).json({err: "Something unexpected happened"})
