@@ -53,3 +53,15 @@ export const verifyRefresh = async (token: string, req: Request) => {
     if (result.revokedat) throw new AttackError('Critical attack! Revoked token use detected')
     return result
 }
+
+export const rotateRefresh = async (token: string, res: Response, req: Request) => {
+    const refreshToken = createRefreshToken()
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/refresh'
+    })
+    req.log.info('New refresh token created')
+    return refreshToken
+}
