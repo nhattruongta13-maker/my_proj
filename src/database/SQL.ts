@@ -45,3 +45,9 @@ export const deleteToken = async (hash: string) => {
                                     [hash]
     )
 }
+
+export const setTokenRevoked = async (hash: string) => {
+    const result = await pool.query(`UPDATE refreshtoken SET revokedat = NOW() WHERE token = $1`,
+                                    [hash]
+    )
+}
