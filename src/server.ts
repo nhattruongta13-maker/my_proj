@@ -3,8 +3,15 @@ import cors from 'cors'
 import authRouter from './route/auth'
 import cookieParser from 'cookie-parser'
 
+const allowed = ['https']
 const app = express()
-app.use(cors())
+app.use(cors({
+    origin: (origin, cb) => {
+        if (!origin || allowed.includes(origin)) return cb(null, true)
+        return cb(new Error('CORS blocked'))
+    },
+    credentials: true
+}))
 app.use(express.json())
 app.use(cookieParser())
 app.set('trust proxy', 1)
