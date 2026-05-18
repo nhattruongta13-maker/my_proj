@@ -40,10 +40,8 @@ export const findTokenByHash = async (hash: string) => {
     return result.rows[0]
 }
 
-export const deleteToken = async (hash: string) => {
-    const result = await pool.query(`DELETE FROM refreshtoken WHERE token = $1`,
-                                    [hash]
-    )
+export const deleteTokenByExpiry = async () => {
+    const result = await pool.query(`DELETE FROM refreshtoken WHERE expiresat < NOW()`)
 }
 
 export const setTokenRevoked = async (hash: string) => {
